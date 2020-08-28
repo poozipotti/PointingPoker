@@ -1,0 +1,18 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "George Beckert",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  }
+}
