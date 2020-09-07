@@ -1,12 +1,14 @@
 {
   "name": "server",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "George Beckert",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon"
+    "start": "node-ts index.ts",
+    "start:dev": "nodemon"
+
   },
   "dependencies": {
     "nodemon": "^2.0.4",
