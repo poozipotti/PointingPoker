@@ -1,43 +1,45 @@
-import React from "react";
-import styled from "styled-components";
+import React, {useContext} from "react";
+import styled,{ThemeContext} from "styled-components";
 import { Theme, Color } from "../../types";
 
-type Intent = "NONE" | "PRIMARY" | "SECONDARY";
-interface ButtonProps {
-  intent: Intent;
+interface VoterCardProps {
+  name: string
+  isVoting: boolean
+  hasCompleted: boolean 
+  completeColor?: string
+  incompleteColor?: string
+  notVotingColor?: string
 }
 
-const intentToColor = (
-  intent: Intent,
-  theme: Theme,
-  lightness: keyof Color
-) => {
-  switch (intent) {
-    case "PRIMARY":
-      return theme.primary[lightness];
-    case "SECONDARY":
-      return theme.accent[lightness];
-    case "NONE":
-      return theme.dark[lightness];
-  }
-};
-
-const StyledButton = styled.button<ButtonProps>`
+const VoterContainer = styled.div`
   border-radius: 10px;
-  font-family: "Poppins", sans-serif;
-  border: 5px solid ${props => intentToColor(props.intent, props.theme, 1)};
-  font-size: 2rem;
+  width: 100%;
+  border: 1px solid ${props => props.theme.dark[1]};
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 10%;
+  padding-right: 10%;
   background-color: ${props => props.theme.light};
-  color: ${props => intentToColor(props.intent, props.theme, 1)} 
-  &:hover: {
-    color: ${props => intentToColor(props.intent,props.theme,2)};
-  }
 `;
+const VotingStatusAlert = styled.div<{color:string}>`
+  background-color: ${props => props.color};
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  border: 1px solid ${props => props.theme.dark[1]};
 
-export const Button: React.FC<ButtonProps> = props => {
-  return (
-    <StyledButton {...props}>
-      <div style={{ display: "flex" }}>{props.children}</div>
-    </StyledButton>
-  );
+
+`
+
+export const VoterCard: React.FC<VoterCardProps> = (props) => {
+  const theme:Theme = useContext(ThemeContext)
+  const completeColor = props.completeColor || theme.primary[2];
+  const incompleteColor = props.incompleteColor || theme.accent[2];
+  const notVotingColor = props.incompleteColor || theme.dark[4];
+
+  const displayColor = props.isVoting ? (props.hasCompleted ? completeColor : incompleteColor ) : notVotingColor 
+  
+  return <VoterContainer><p>{props.name}</p> <VotingStatusAlert color={displayColor}/></VoterContainer>
 };
