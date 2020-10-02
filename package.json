@@ -1,4 +1,8 @@
 {
   "private": true,
-  "workspaces": ["client"]
+  "workspaces": ["client"],
+  "scripts": {
+    "storybook": "yarn workspace client start-storybook -p 6006 -s public",
+    "build-storybook": "clientbuild-storybook -s public"
+  }
 }
