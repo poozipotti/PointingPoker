@@ -6,7 +6,7 @@ import { Button } from "./components/Button";
 export const AppContainer = styled.div`
   background-color: ${props => props.theme.light};
   display: grid;
-  grid-template: 100% / 67% 33%;
+  grid-template: 67% 33% / 100%;
 `;
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <AppContainer>
+          <Button intent="PRIMARY">hi</Button>
         </AppContainer>
       </ThemeProvider>
     </>

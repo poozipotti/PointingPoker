@@ -5,6 +5,7 @@ import { Theme, Color } from "../../types";
 type Intent = "NONE" | "PRIMARY" | "SECONDARY";
 interface ButtonProps {
   intent: Intent;
+  onClick?:  (event:React.ChangeEvent<HTMLButtonElement>) => void;
 }
 
 const intentToColor = (
@@ -44,8 +45,8 @@ const StyledButton = styled.button<ButtonProps>`
 
 export const Button: React.FC<ButtonProps> = props => {
   return (
-    <StyledButton {...props}>
-      <div style={{ display: "flex" }}>{props.children}</div>
+    <StyledButton {...props} onClick={props.onClick as any}>
+      <div style={{ display: "flex", justifyContent:"center" }} >{props.children}</div>
     </StyledButton>
   );
 };
