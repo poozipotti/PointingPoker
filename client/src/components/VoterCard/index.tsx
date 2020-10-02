@@ -23,7 +23,7 @@ const VoterContainer = styled.div`
   padding-right: 10%;
   background-color: ${props => props.theme.light};
 `;
-const VotingStatusAlert = styled.div<{color:string}>`
+const VotingStatusBox = styled.div<{color:string}>`
   background-color: ${props => props.color};
   width: 35px;
   height: 35px;
@@ -41,5 +41,5 @@ export const VoterCard: React.FC<VoterCardProps> = (props) => {
 
   const displayColor = props.isVoting ? (props.hasCompleted ? completeColor : incompleteColor ) : notVotingColor 
   
-  return <VoterContainer><p>{props.name}</p> <VotingStatusAlert color={displayColor}/></VoterContainer>
+  return <VoterContainer><p>{props.name}</p> <VotingStatusBox color={displayColor}/></VoterContainer>
 };
