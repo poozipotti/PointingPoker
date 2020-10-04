@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 interface CheckBoxProps {
   label: string
+  style: React.CSSProperties
 }
 
 const CheckboxContainer = styled.div`
@@ -24,7 +25,7 @@ const CheckboxContainer = styled.div`
 
 export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   return   (
-    <CheckboxContainer>
+    <CheckboxContainer style= {props.style}>
       <label>{props.label}</label> 
       <input type="checkbox" name="vehicle1" value="Bike"/>
     </CheckboxContainer>

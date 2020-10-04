@@ -15,7 +15,6 @@ interface VoterCardProps {
 const VoterContainer = styled.div`
   border-radius: 10px;
   width: 80%;
-  font-family: "Poppins", sans-serif;
   border: 2px solid ${(props) => props.theme.dark[1]};
   font-size: 1rem;
   display: flex;

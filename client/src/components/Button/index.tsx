@@ -25,7 +25,6 @@ const intentToColor = (
 
 const StyledButton = styled.button<ButtonProps>`
   border-radius: 10px;
-  font-family: "Poppins", sans-serif;
   border: 5px solid ${props => intentToColor(props.intent, props.theme, 1)};
   font-size: 2rem;
   background-color: ${props => props.theme.light};

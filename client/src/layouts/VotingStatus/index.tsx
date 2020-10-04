@@ -19,7 +19,6 @@ const VotingContainer = styled.div`
 const Title = styled.h2`
   wdith: 100%;
   text-align: center;
-  font-family: "Poppins", sans-serif;
   font-size: 2rem;
 `;
 
