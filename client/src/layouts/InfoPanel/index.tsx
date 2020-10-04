@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, {ChangeEvent}  from "react";
 import styled from "styled-components";
-import { VoterCard } from "../../components/VoterCard";
 import { TextInput } from "../../components/TextInput";
 import {CheckBox} from "../../components/CheckBox";
 
 interface InfoPanelProps {
   roomName: string;
   storyDescription?: string;
+  username?:string;
+  changeUsername?: (e:ChangeEvent<HTMLInputElement>) => void
+
 }
 
 const VotingContainer = styled.div`
@@ -30,7 +32,7 @@ export const InfoPanel: React.FC<InfoPanelProps> = (props) => {
       </div>
       <div style={{display:'flex',alignItems:'center',marginTop:'90px'}}>
         <h2 style={{width:'20%'}}>Your Name: </h2>
-        <DescriptionEditor placeholder="Jane Doe" />
+        <DescriptionEditor placeholder="Jane Doe" value={props.username} onChange={props.changeUsername}/>
       </div>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <CheckBox label={'Skip Me'} style={{width:'30%'}}/>
