@@ -23,13 +23,13 @@ export const InfoPanel: React.FC<InfoPanelProps> = (props) => {
   const { roomName, storyDescription } = props;
   return (
     <div>
-      <h1>{roomName}</h1>
+      <h1 style={{fontSize:'4rem'}}>{roomName}</h1>
       <div style={{display:'flex',alignItems:'center'}}>
-        <h2>Story: </h2>
+        <h2 style={{width:'20%'}}>Story: </h2>
         <DescriptionEditor placeholder="input description" />
       </div>
       <div style={{display:'flex',alignItems:'center',marginTop:'90px'}}>
-        <h2>Your Name: </h2>
+        <h2 style={{width:'20%'}}>Your Name: </h2>
         <DescriptionEditor placeholder="Jane Doe" />
       </div>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>

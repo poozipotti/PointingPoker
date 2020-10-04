@@ -8,6 +8,7 @@ interface VoterMap {
 
 interface ButtonProps {
   voters: VoterMap;
+  style?: React.CSSProperties;
 }
 
 const VotingContainer = styled.div`
@@ -24,7 +25,7 @@ const Title = styled.h2`
 
 export const VotingStatus: React.FC<ButtonProps> = (props) => {
   return (
-    <>
+    <div style={props.style}>
       <Title>-Results-</Title>
       <VotingContainer>
         {Object.entries(props.voters)
@@ -44,6 +45,6 @@ export const VotingStatus: React.FC<ButtonProps> = (props) => {
         .map(([voter]) => (
           <VoterCard name={voter} isVoting={false} hasCompleted={false} />
         ))}
-    </>
+    </div>
   );
 };

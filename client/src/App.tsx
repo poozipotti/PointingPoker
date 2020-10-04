@@ -3,17 +3,15 @@ import styled, { ThemeProvider } from "styled-components";
 import { theme } from "./themes";
 import {InfoPanel} from "./layouts/InfoPanel";
 import {PointButtons} from "./layouts/PointButtons";
-import {VoterCard} from "./components/VoterCard";
 import {VotingStatus} from "./layouts/VotingStatus";
 
 export const AppContainer = styled.div`
   background-color: ${props => props.theme.light};
   display: grid;
-  grid-template: 100% / 67% 33%;
-  grid-column-gap: 100px;
-  width:80%;
+  grid-template: 100% / 2fr 1fr;
+  width: 90%; 
+  grid-column-gap: 300px;
   margin:auto;
-   
 `;
 
 function App() {
@@ -33,6 +31,7 @@ function App() {
                   "doug":{status:null},
                   "anne":{status:false},
                 }}
+                style={{marginTop:'5rem'}}
 
               />
             </div>
