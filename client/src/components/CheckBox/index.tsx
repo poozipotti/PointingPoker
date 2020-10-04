@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 interface CheckBoxProps {
   label: string
-  style: React.CSSProperties
+  style?: React.CSSProperties
 }
 
 const CheckboxContainer = styled.div`

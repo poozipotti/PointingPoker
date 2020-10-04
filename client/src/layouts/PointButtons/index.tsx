@@ -6,6 +6,7 @@ interface ButtonProps {
   pointValues: number[]
   selectedValue?: number
   onChange?: (newPointValue:number) => void
+  style?: React.CSSProperties
 }
 
 const ButtonsContainer = styled.div`
@@ -24,7 +25,7 @@ export const PointButtons: React.FC<ButtonProps> = props => {
   const changeSelection = onChange || ((newPointValue:number) => {setUncontrolledSelection(newPointValue)})
 
   return (
-    <ButtonsContainer>
+    <ButtonsContainer style={props.style}>
       {pointValues.map(
          pointValue => (
            <Button 

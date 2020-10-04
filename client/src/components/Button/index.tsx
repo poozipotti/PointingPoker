@@ -35,7 +35,7 @@ const StyledButton = styled.button<ButtonProps>`
   }
   &:focus {
     transform: translate(1px,1px);
-    color: ${props => intentToColor(props.intent, props.theme, 2)};
+    color: ${props => intentToColor(props.intent, props.theme, 1)};
     border: 5px solid ${props => intentToColor(props.intent, props.theme, 2)};
     outline:none;
   }
