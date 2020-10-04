@@ -34,7 +34,7 @@ export const PointButtons: React.FC<ButtonProps> = props => {
                changeSelection(pointValue)
              }}
            >
-             {pointValue}
+             {pointValue} points
            </Button>
          )
       )} 
