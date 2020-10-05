@@ -36,7 +36,6 @@ export const InfoPanel: React.FC<InfoPanelProps> = (props) => {
       </div>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <CheckBox label={'Skip Me'} style={{width:'30%'}}/>
-        <CheckBox label={'AutoComplete'} style={{width:'30%'}}/>
       </div>
     </div>
   );

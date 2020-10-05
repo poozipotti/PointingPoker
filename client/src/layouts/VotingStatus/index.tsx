@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { VoterCard } from "../../components/VoterCard";
 
 interface VoterMap {
-  [voterName: string]: { status: true | false | null; voteValue?: number };
+  [voterName: string]: { status: true | false | null ; voteValue?: number };
 }
 
 interface ButtonProps {
@@ -32,6 +32,7 @@ export const VotingStatus: React.FC<ButtonProps> = (props) => {
           .filter(([, voteValue]) => voteValue.status !== null)
           .map(([voter, voteValue]) => (
             <VoterCard
+              key={voter}
               name={voter}
               isVoting={true}
               hasCompleted={voteValue.status || false}

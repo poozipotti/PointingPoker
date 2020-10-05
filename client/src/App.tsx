@@ -5,6 +5,7 @@ import { InfoPanel } from "./layouts/InfoPanel";
 import { PointButtons } from "./layouts/PointButtons";
 import { VotingStatus } from "./layouts/VotingStatus";
 import io from "socket.io-client";
+import { Button } from "./components/Button";
 
 const socket = io("http://localhost:5000");
 
@@ -14,17 +15,13 @@ const useGetId = () => {
   return id;
 };
 
-type updateFunc<T> = (newVal: {
-  userId: string;
-  socketName: string;
-  newValue: T;
-}) => void;
+type updateFunc<T> = (newVal: T) => void;
 
 interface userMap {
-  [userId: string]: { username: string };
+  [userId: string]: { username: string; vote?: number; showVote?: boolean };
 }
 
-type userIdentity = (users:userMap) => userMap;
+type userIdentity = (users: userMap) => userMap;
 
 const useServerUpdate = <T extends unknown>({
   initialState,
@@ -37,14 +34,15 @@ const useServerUpdate = <T extends unknown>({
   socketName: string;
   userId: string;
   userField?: string;
-  setUsers?: (usersUpdate:userIdentity) => void;
+  setUsers?: (usersUpdate: userIdentity) => void;
 }) => {
   const [state, setState] = useState(initialState);
   useEffect(() => {
     socket.on(`${socketName}_updated`, (data: { userId: string; value: T }) => {
-      if (data.userId === userId) {
+      if (userId === data.userId) {
         setState(data.value);
-      } else if (userField && setUsers) {
+      } 
+      if (userField && setUsers) {
         //update our state with other user States
         setUsers((users) => ({
           ...users,
@@ -55,12 +53,12 @@ const useServerUpdate = <T extends unknown>({
         }));
       }
     });
-  }, [socketName, userId, userField,setUsers]);
+  }, [socketName, userId, userField, setUsers]);
   return [
     state,
-    (newVal: { newValue: T }) => {
+    (newVal: T) => {
       socket.emit(socketName, {
-        value: newVal.newValue,
+        value: newVal,
         userId: userId,
       });
     },
@@ -78,14 +76,42 @@ export const AppContainer = styled.div`
 
 function App() {
   const myId = useGetId();
+  const [syncTime, setSyncTime] = useState<number | undefined>(undefined);
   const [users, setUsers] = useState<userMap>({});
+  const [, setShowVote] = useServerUpdate({
+    initialState: false,
+    socketName: "show_vote",
+    userId: myId,
+    userField: "showVote",
+    setUsers: setUsers,
+  });
   const [username, setUsername] = useServerUpdate<undefined | string>({
     initialState: "",
     socketName: "username",
     userId: myId,
-    userField: 'username',
-    setUsers: setUsers
+    userField: "username",
+    setUsers: setUsers,
   });
+  const [vote, setVote] = useServerUpdate<undefined | number>({
+    initialState: undefined,
+    socketName: "vote",
+    userId: myId,
+    userField: "vote",
+    setUsers: setUsers,
+  });
+  useEffect(() => {
+    socket.on("request_sync", () => {
+      if (syncTime) {
+        socket.emit("sync_clients", JSON.stringify({ users, syncTime: Date.now() }));
+      }
+    });
+    socket.on("sync_data", (data: { users: userMap; syncTime: number }) => {
+      if (data.users && (!syncTime || syncTime < data.syncTime)) {
+        setUsers(data.users);
+      }
+        setSyncTime(Date.now());
+    });
+  }, []);
 
   return (
     <>
@@ -95,17 +121,13 @@ function App() {
             <InfoPanel
               roomName="Test Room"
               username={username}
-              changeUsername={(e) =>
-                setUsername({
-                  socketName: "username",
-                  newValue: e.target.value,
-                  userId: myId,
-                })
-              }
+              changeUsername={(e) => setUsername(e.target.value)}
             />
             <PointButtons
               pointValues={[0.5, 1, 2, 5, 8, 9, 15]}
               style={{ marginTop: "150px" }}
+              selectedValue={vote}
+              onChange={setVote}
             />
           </div>
           <div>
@@ -113,12 +135,32 @@ function App() {
               voters={Object.values(users).reduce(
                 (userMap, user) => ({
                   ...userMap,
-                  [user.username]: { status: false },
+                  [user.username]: {
+                    status: user.vote,
+                    voteValue:
+                      Object.values(users).filter((user) => user.showVote)
+                        .length > 0 && user.vote,
+                  },
                 }),
                 {}
               )}
-              style={{ marginTop: "5rem" }}
+              style={{
+                marginTop: "5rem",
+                height: "80vh",
+                overflowY: "scroll",
+              }}
             />
+            <div style={{ display: "flex" }}>
+              <Button
+                onClick={() => {
+                  setShowVote(true);
+                }}
+                intent="SECONDARY"
+              >
+                Show Votes
+              </Button>
+              <Button intent="PRIMARY">Clear Votes</Button>
+            </div>
           </div>
         </AppContainer>
       </ThemeProvider>
