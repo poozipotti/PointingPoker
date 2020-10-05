@@ -2,6 +2,8 @@
 
 This is a fun little weekend project to start learning some flask and more about websockets. Expect more soon!
 
+inspired by: https://www.pointingpoker.com/
+
 ## Running the App
 ```
 First start the websocket server
