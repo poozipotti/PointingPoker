@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { theme } from "./themes";
 import { InfoPanel } from "./layouts/InfoPanel";
@@ -18,7 +18,12 @@ const useGetId = () => {
 type updateFunc<T> = (newVal: T) => void;
 
 interface userMap {
-  [userId: string]: { username: string; vote?: number; showVote?: boolean };
+  [userId: string]: {
+    username: string;
+    vote?: number;
+    showVote?: boolean;
+    shouldSkip?:boolean;
+  };
 }
 
 type userIdentity = (users: userMap) => userMap;
@@ -37,11 +42,18 @@ const useServerUpdate = <T extends unknown>({
   setUsers?: (usersUpdate: userIdentity) => void;
 }) => {
   const [state, setState] = useState(initialState);
+  const updateFN = useCallback((newVal: T) => {
+    socket.emit(socketName, {
+      value: newVal,
+      userId: userId,
+    });
+  }, []);
+
   useEffect(() => {
     socket.on(`${socketName}_updated`, (data: { userId: string; value: T }) => {
       if (userId === data.userId) {
         setState(data.value);
-      } 
+      }
       if (userField && setUsers) {
         //update our state with other user States
         setUsers((users) => ({
@@ -54,15 +66,8 @@ const useServerUpdate = <T extends unknown>({
       }
     });
   }, [socketName, userId, userField, setUsers]);
-  return [
-    state,
-    (newVal: T) => {
-      socket.emit(socketName, {
-        value: newVal,
-        userId: userId,
-      });
-    },
-  ] as [T, updateFunc<T>];
+
+  return [state, updateFN] as [T, updateFunc<T>];
 };
 
 export const AppContainer = styled.div`
@@ -76,13 +81,19 @@ export const AppContainer = styled.div`
 
 function App() {
   const myId = useGetId();
-  const [syncTime, setSyncTime] = useState<number | undefined>(undefined);
   const [users, setUsers] = useState<userMap>({});
   const [, setShowVote] = useServerUpdate({
     initialState: false,
     socketName: "show_vote",
     userId: myId,
     userField: "showVote",
+    setUsers: setUsers,
+  });
+  const [shouldSkip, setShouldSkip] = useServerUpdate({
+    initialState: false,
+    socketName: "set_skip",
+    userId: myId,
+    userField: "shouldSkip",
     setUsers: setUsers,
   });
   const [username, setUsername] = useServerUpdate<undefined | string>({
@@ -100,18 +111,28 @@ function App() {
     setUsers: setUsers,
   });
   useEffect(() => {
+    console.log();
+    socket.on("reset_votes", () => {
+      setVote(undefined);
+      setShowVote(false);
+    });
+  }, [setShowVote, setVote]);
+  useEffect(() => {
     socket.on("request_sync", () => {
-      if (syncTime) {
-        socket.emit("sync_clients", JSON.stringify({ users, syncTime: Date.now() }));
+      if (users) {
+        socket.emit("sync_clients", { users: users, userId: myId });
       }
     });
-    socket.on("sync_data", (data: { users: userMap; syncTime: number }) => {
-      if (data.users && (!syncTime || syncTime < data.syncTime)) {
+    socket.on("send_sync_data", (data: { users: userMap; userId: string }) => {
+      if (data.userId !== myId && data.users) {
         setUsers(data.users);
       }
-        setSyncTime(Date.now());
     });
-  }, []);
+    return () => {
+      socket.off("request_sync");
+      socket.off("send_sync_data");
+    };
+  }, [myId, users]);
 
   return (
     <>
@@ -122,6 +143,8 @@ function App() {
               roomName="Test Room"
               username={username}
               changeUsername={(e) => setUsername(e.target.value)}
+              shouldSkip={shouldSkip}
+              setShouldSkip={() => setShouldSkip(!shouldSkip)}
             />
             <PointButtons
               pointValues={[0.5, 1, 2, 5, 8, 9, 15]}
@@ -136,7 +159,7 @@ function App() {
                 (userMap, user) => ({
                   ...userMap,
                   [user.username]: {
-                    status: user.vote,
+                    status: user.shouldSkip ? null : user.vote,
                     voteValue:
                       Object.values(users).filter((user) => user.showVote)
                         .length > 0 && user.vote,
@@ -159,7 +182,14 @@ function App() {
               >
                 Show Votes
               </Button>
-              <Button intent="PRIMARY">Clear Votes</Button>
+              <Button
+                intent="PRIMARY"
+                onClick={() => {
+                  socket.emit("reset_votes");
+                }}
+              >
+                Clear Votes
+              </Button>
             </div>
           </div>
         </AppContainer>

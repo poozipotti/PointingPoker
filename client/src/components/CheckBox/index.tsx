@@ -4,6 +4,8 @@ import styled from "styled-components";
 interface CheckBoxProps {
   label: string
   style?: React.CSSProperties
+  onclick?: (e:React.MouseEvent<HTMLInputElement>) => void
+  value?: boolean
 }
 
 const CheckboxContainer = styled.div`
@@ -27,7 +29,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   return   (
     <CheckboxContainer style= {props.style}>
       <label>{props.label}</label> 
-      <input type="checkbox" name="vehicle1" value="Bike"/>
+      <input type="checkbox" checked={props.value} onClick={props.onclick}/>
     </CheckboxContainer>
   )
 };
